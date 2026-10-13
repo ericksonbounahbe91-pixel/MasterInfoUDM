@@ -1,0 +1,26 @@
+{
+  "name": "universite/tp5-gestion-etudiants",
+  "description": "Gestion des étudiants (PHP procédural, PDO, Bootstrap 5) avec module de génération de cartes étudiantes CR80 (Dompdf + QR Code).",
+  "type": "project",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.0",
+    "ext-pdo": "*",
+    "ext-mbstring": "*",
+    "dompdf/dompdf": "^3.0",
+    "endroid/qr-code": "^5.0"
+  },
+  "suggest": {
+    "ext-imagick": "Export PNG haute résolution à partir du PDF (nécessite Ghostscript).",
+    "ext-zip": "Génération de l'archive ZIP des cartes en lot (cartes_batch.php)."
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "@php -r \"echo 'Dépendances installées. Exécutez maintenant schema_migration.sql dans phpMyAdmin.', PHP_EOL;\""
+    ]
+  }
+}

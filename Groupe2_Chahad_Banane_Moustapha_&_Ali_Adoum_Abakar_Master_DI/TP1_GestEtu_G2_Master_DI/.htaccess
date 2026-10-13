@@ -1,0 +1,37 @@
+# =============================================================================
+#  .htaccess — Racine du projet
+#  1. Interdit l'accès aux sources sensibles (.env, composer.*, *.sql)
+#  2. Interdit l'exécution de PHP dans le dossier des cartes
+#  3. Active la compression et la mise en cache des assets statiques
+# =============================================================================
+
+Options -Indexes
+DirectoryIndex index.php
+
+# --- 1. Fichiers sensibles ---------------------------------------------------
+<FilesMatch "\.(env|json|lock|sql|md|log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# --- 2. Aucun script dans /cartes -------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^cartes/.*\.php$ - [F,L]
+</IfModule>
+
+# --- 3. Compression et cache -------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml
+</IfModule>
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/png "access plus 30 days"
+</IfModule>
