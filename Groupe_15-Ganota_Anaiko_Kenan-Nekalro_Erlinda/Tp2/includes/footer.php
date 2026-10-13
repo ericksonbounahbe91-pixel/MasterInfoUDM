@@ -1,0 +1,1 @@
+</main><footer class="footer">Gestion des lignes de commande · PHP / MySQL · XAMPP</footer></body></html>

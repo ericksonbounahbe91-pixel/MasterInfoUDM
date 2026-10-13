@@ -1,0 +1,12 @@
+<?php
+require_once 'config.php';require_admin();
+if($_SERVER['REQUEST_METHOD']==='POST'){check_csrf();$action=$_POST['action']??'';
+ if($action==='role'){$id=(int)$_POST['idUser'];$role=$_POST['role']??'user';if($id===current_user_id()){flash('Vous ne pouvez pas modifier votre propre rôle ici.','error');redirect('utilisateurs.php');}if(!in_array($role,['admin','user'],true)){flash('Rôle invalide.','error');redirect('utilisateurs.php');}$s=$pdo->prepare('UPDATE users SET role=? WHERE idUser=?');$s->execute([$role,$id]);flash('Rôle mis à jour.');redirect('utilisateurs.php');}
+ if($action==='delete'){$id=(int)$_POST['idUser'];if($id===current_user_id()){flash('Vous ne pouvez pas supprimer votre propre compte.','error');redirect('utilisateurs.php');}$s=$pdo->prepare('DELETE FROM users WHERE idUser=?');$s->execute([$id]);flash('Utilisateur supprimé.');redirect('utilisateurs.php');}
+}
+$rows=$pdo->query('SELECT idUser,nom,email,role,dateCreation FROM users ORDER BY dateCreation DESC')->fetchAll();
+$pageTitle='Utilisateurs';require 'includes/header.php';
+?>
+<div class="page-heading"><div><h1>Utilisateurs</h1><p class="muted">Réservé à l’administrateur : gérer les rôles et les comptes.</p></div></div>
+<section class="panel"><div class="table-wrap"><table><thead><tr><th>Nom</th><th>E-mail</th><th>Rôle</th><th>Créé le</th><th>Actions</th></tr></thead><tbody><?php foreach($rows as $r): ?><tr><td><?=h($r['nom'])?><?=((int)$r['idUser']===current_user_id())?' (vous)':''?></td><td><?=h($r['email'])?></td><td><span class="role-badge"><?=h($r['role'])?></span></td><td><?=h($r['dateCreation'])?></td><td class="actions"><?php if((int)$r['idUser']!==current_user_id()): ?><form method="post" class="inline"><input type="hidden" name="csrf" value="<?=h(csrf_token())?>"><input type="hidden" name="action" value="role"><input type="hidden" name="idUser" value="<?=$r['idUser']?>"><select name="role"><option value="user" <?=$r['role']==='user'?'selected':''?>>Utilisateur</option><option value="admin" <?=$r['role']==='admin'?'selected':''?>>Administrateur</option></select><button class="btn small secondary">Changer</button></form><form method="post" class="inline delete-form"><input type="hidden" name="csrf" value="<?=h(csrf_token())?>"><input type="hidden" name="action" value="delete"><input type="hidden" name="idUser" value="<?=$r['idUser']?>"><button class="btn small danger">Supprimer</button></form><?php else: ?>—<?php endif; ?></td></tr><?php endforeach; ?></tbody></table></div></section>
+<?php require 'includes/footer.php'; ?>
