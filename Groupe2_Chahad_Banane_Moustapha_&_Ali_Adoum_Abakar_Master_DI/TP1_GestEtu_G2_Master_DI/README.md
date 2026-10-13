@@ -1,4 +1,4 @@
-# Gestion des étudiants — TP5 refactorisé + cartes étudiantes
+# Gestion des étudiants
 
 Application PHP **procédurale** (PDO + Bootstrap 5) de gestion d'étudiants,
 avec module complet de génération de cartes étudiantes au format CR80
