@@ -9,7 +9,7 @@ Réalisée avec **Laravel 12**, **PHP 8.2+** et **MySQL**.
 | Membre | Compte GitHub |
 |---|---|
 | CHAHAD Banane Moustapha | *@bananefils00* |
-| ALI Adoum Abakar | *(Ali-Adoum-Abakar)* |
+| ALI Adoum Abakar | *Ali-Adoum-Abakar* |
 
 ## Encadrement
 
