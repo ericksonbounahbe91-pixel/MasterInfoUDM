@@ -29,7 +29,7 @@ cd C:\xampp\htdocs
 # le dossier s'appelle tp1
 
 # 2. Installer les dépendances
-cd C:\xampp\htdocs\tp5
+cd C:\xampp\htdocs\tp1
 composer install
 
 # 3. Créer la table de journalisation des cartes
