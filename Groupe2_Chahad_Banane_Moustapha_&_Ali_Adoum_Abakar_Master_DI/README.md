@@ -60,7 +60,7 @@ TPs_Master1_DI/
 **Prérequis** : XAMPP (Apache, PHP 8.0 ou plus, MySQL/MariaDB), Composer, extensions PHP `pdo_mysql`, `mbstring`, `zip` (`imagick` facultative pour le PNG).
 
 **Installation et lancement**
-1. Copier le dossier du projet dans `C:\xampp\htdocs\tp5`.
+1. Copier le dossier du projet dans `C:\xampp\htdocs\tp`.
 2. Dans un terminal : `cd C:\xampp\htdocs\tp5` puis `composer install`.
 3. Démarrer Apache et MySQL depuis le panneau XAMPP.
 4. Dans phpMyAdmin, ouvrir la base `universite`, onglet **SQL**, coller le contenu de `schema_migration.sql` et exécuter.
