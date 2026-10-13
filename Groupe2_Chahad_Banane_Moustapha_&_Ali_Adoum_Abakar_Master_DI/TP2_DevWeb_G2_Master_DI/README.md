@@ -36,8 +36,8 @@ Réalisée avec **Laravel 12**, **PHP 8.2+** et **MySQL**.
 
 ```bash
 # 1. Récupérer le projet
-git clone https://github.com/bananefils00/TP_G3_Master_DI.git
-cd TP_G3_Master_DI
+git clone https://github.com/kamadou/MasterInfoUDM.git
+cd Groupe2_Chahad_Banane_Moustapha_&_Ali_Adoum_Abakar_Master_DI
 
 # 2. Installer les dépendances PHP
 composer install
