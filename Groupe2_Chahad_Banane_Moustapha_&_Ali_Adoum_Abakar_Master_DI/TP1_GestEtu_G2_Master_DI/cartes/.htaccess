@@ -1,0 +1,14 @@
+# =============================================================================
+#  cartes/.htaccess — Protection du dossier de génération
+#  Les cartes ne doivent jamais être servies directement : elles ne sont
+#  téléchargeables que par carte.php / cartes_batch.php, après contrôle.
+# =============================================================================
+# Apache 2.4 (XAMPP)
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+# Apache 2.2 (repli)
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

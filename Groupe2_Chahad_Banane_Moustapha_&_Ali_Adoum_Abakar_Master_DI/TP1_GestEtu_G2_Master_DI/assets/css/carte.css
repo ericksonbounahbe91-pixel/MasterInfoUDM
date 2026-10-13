@@ -1,0 +1,208 @@
+/* =============================================================================
+ *  assets/css/carte.css — Habillage de la carte étudiante (format CR80)
+ * =============================================================================
+ *  Ce fichier est INLINÉ par templates/carte_template.php : le rendu est donc
+ *  identique dans le navigateur (aperçu de carte.php), dans l'export PNG
+ *  (wkhtmltoimage) et dans le PDF (Dompdf).
+ *
+ *  Choix techniques imposés par Dompdf :
+ *    - pas de flexbox, pas de grid, pas de variables CSS, pas de color-mix() ;
+ *    - la mise en page repose sur un conteneur de dimensions fixes
+ *      (85,6 × 54 mm) et sur des blocs POSITIONNÉS EN ABSOLU à l'intérieur :
+ *      c'est la seule structure que Dompdf reproduit à l'identique, sans
+ *      découper la carte en plusieurs pages ;
+ *    - toutes les dimensions sont exprimées en millimètres.
+ *
+ *  Format : CR80 = 85,6 × 54 mm, marge de sécurité intérieure de 3 mm.
+ * ========================================================================== */
+
+/* -----------------------------------------------------------------------------
+ * 1. Bloc carte
+ * --------------------------------------------------------------------------- */
+.carte-cr80 {
+  position: relative; margin: 0; padding: 0;
+  width: 85.6mm; height: 54mm;
+  box-sizing: border-box; overflow: hidden;
+  background: #ffffff; color: #111827;
+  border: 0.3mm solid #d8dee9; border-radius: 3.2mm;
+  font-family: "DejaVu Sans", Verdana, Helvetica, Arial, sans-serif;
+  font-size: 8.5pt; line-height: 1.2;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, .12);
+  page-break-inside: avoid;
+}
+.carte-cr80 * { box-sizing: border-box; }
+.carte-recto, .carte-verso {
+  position: relative; width: 85.6mm; height: 54mm; overflow: hidden;
+}
+
+/* -----------------------------------------------------------------------------
+ * 2. Bandeau supérieur — logo, établissement, QR code
+ * --------------------------------------------------------------------------- */
+.carte-cr80 .bandeau { position: absolute; left: 0; top: 0; width: 85.6mm; height: 13mm; }
+.carte-cr80 .bandeau .logo {
+  position: absolute; left: 3.2mm; top: 2.7mm; width: 7.6mm; height: 7.6mm;
+  border: 0; border-radius: 50%; background: #ffffff;
+}
+.carte-cr80 .bandeau .logo-secours {
+  color: #ffffff; font-size: 11pt; font-weight: 800;
+  line-height: 7.6mm; text-align: center; letter-spacing: 0;
+}
+.carte-cr80 .bandeau .etablissement { position: absolute; left: 14.2mm; top: 2.8mm; width: 55mm; }
+.carte-cr80 .bandeau .etablissement strong {
+  display: block; color: #ffffff; font-size: 9.5pt; font-weight: 700; line-height: 1.05;
+}
+.carte-cr80 .bandeau .etablissement span {
+  display: block; font-size: 6.3pt; letter-spacing: .05em; line-height: 1.15; margin-top: .3mm;
+}
+.carte-cr80 .bandeau .qr {
+  position: absolute; right: 3.2mm; top: 2.2mm; width: 8.6mm; height: 8.6mm;
+  padding: .5mm; background: #ffffff; border-radius: 1.2mm;
+}
+.carte-cr80 .bandeau .qr img { display: block; width: 100%; height: 100%; }
+
+/* -----------------------------------------------------------------------------
+ * 3. Corps — photo (ou initiales), matricule, état civil
+ * --------------------------------------------------------------------------- */
+.carte-cr80 .corps { position: absolute; left: 0; top: 13mm; width: 85.6mm; height: 32mm; }
+.carte-cr80 .colonne-photo { position: absolute; left: 4mm; top: 3.4mm; width: 20mm; text-align: center; }
+.carte-cr80 .photo {
+  display: block; width: 20mm; height: 20mm; margin: 0; padding: 0;
+  border-radius: 1.6mm; background: #e5e7eb;
+}
+.carte-cr80 .photo-initiales {
+  color: #ffffff; font-size: 18pt; font-weight: 800;
+  line-height: 20mm; text-align: center;
+}
+.carte-cr80 .matricule {
+  margin-top: .8mm; color: #374151; font-size: 7pt; font-weight: 700;
+  line-height: 1.1; text-align: center;
+  font-family: "DejaVu Sans Mono", Consolas, monospace;
+}
+.carte-cr80 .colonne-infos { position: absolute; left: 27.4mm; top: 2.6mm; width: 54.6mm; }
+.carte-cr80 .nom {
+  color: #16233f; font-size: 11.5pt; font-weight: 800;
+  line-height: 1.05; letter-spacing: .01em; text-transform: uppercase;
+}
+.carte-cr80 table.infos { width: 100%; margin: 1.2mm 0 0 0; border: 0; border-collapse: collapse; }
+.carte-cr80 table.infos th,
+.carte-cr80 table.infos td { border: 0; background: none; padding: 0; line-height: 1.15; vertical-align: top; }
+.carte-cr80 table.infos th {
+  width: 17mm; text-align: left; color: #6b7280; font-size: 6.6pt; font-weight: 400;
+}
+.carte-cr80 table.infos td { color: #111827; font-size: 7pt; font-weight: 700; }
+.carte-cr80 .doux { color: #6b7280; font-weight: 400; font-size: 6.2pt; }
+
+/* Filigranes : nom de l'établissement (discret) et « COPIE » (génération par lot). */
+.carte-cr80 .filigrane-discret {
+  position: absolute; left: 0; top: 32.6mm; width: 85.6mm; color: #edf0f6;
+  font-size: 10.5pt; font-weight: 800; line-height: 1.05; letter-spacing: .06em;
+  text-align: center; transform: rotate(-8deg);
+}
+.carte-cr80 .filigrane {
+  position: absolute; left: 0; top: 14mm; width: 85.6mm; height: 30mm;
+  color: #f3cdd6; font-size: 30pt; font-weight: 800; line-height: 30mm;
+  letter-spacing: .18em; text-align: center; transform: rotate(-18deg); z-index: 5;
+}
+
+/* -----------------------------------------------------------------------------
+ * 4. Pied — validité, code-barres, mention légale
+ * --------------------------------------------------------------------------- */
+.carte-cr80 .pied {
+  position: absolute; left: 0; bottom: 0; width: 85.6mm; height: 9.6mm;
+  border-top: 0.2mm solid #e2e8f0;
+}
+.carte-cr80 .pied .validite { position: absolute; left: 3.6mm; top: 1.5mm; }
+.carte-cr80 .pied .validite .etiquette {
+  display: block; color: #6b7280; font-size: 6.1pt; line-height: 1.15; letter-spacing: .02em;
+}
+.carte-cr80 .pied .validite strong {
+  display: block; color: #111827; font-size: 9pt; font-weight: 800; line-height: 1.1;
+}
+.carte-cr80 .zone-code-barres { position: absolute; left: 25.6mm; top: 1.2mm; width: 27mm; text-align: center; }
+.carte-cr80 .pied .mention-legale {
+  position: absolute; right: 3.6mm; top: 1.6mm; width: 28mm;
+  text-align: right; color: #6b7280; font-size: 5.5pt; line-height: 1.3;
+}
+
+/* Code-barres purement décoratif (largeurs en mm posées par code_barres_html()). */
+.carte-cr80 .cb {
+  display: block; height: 4mm; overflow: hidden; margin: 0;
+  font-size: 0; line-height: 0; white-space: nowrap; text-align: center;
+}
+.carte-cr80 .cb span { display: inline-block; height: 100%; background: #111827; vertical-align: top; }
+.carte-cr80 .cb span.blanc { background: transparent; }
+.carte-cr80 .cb-txt {
+  color: #374151; font-size: 5.4pt; line-height: 1.1; letter-spacing: .06em; text-align: center;
+  font-family: "DejaVu Sans Mono", Consolas, monospace;
+}
+
+/* -----------------------------------------------------------------------------
+ * 5. Verso — conditions d'utilisation, signatures, cachet
+ * ---------------------------------------------------------------------------
+ *  Un TABLEAU UNIQUE à quatre rangées de hauteur fixe (8 + 16 + 17 + 13 = 54 mm)
+ *  exactement comme le recto : c'est la seule structure que Dompdf empile sans
+ *  jamais découper le contenu sur une page supplémentaire.
+ * ------------------------------------------------------------------------- */
+.carte-cr80 table.verso {
+  width: 85.6mm; height: 54mm; border-collapse: collapse; table-layout: fixed; margin: 0;
+}
+.carte-cr80 table.verso td { border: 0; background: none; padding: 0; vertical-align: top; }
+.carte-cr80 tr.v-titre { height: 8mm; }
+.carte-cr80 tr.v-cond  { height: 16mm; }
+.carte-cr80 tr.v-sign  { height: 17mm; }
+.carte-cr80 tr.v-pied  { height: 13mm; }
+
+.carte-cr80 td.v-titre {
+  padding: 3mm 4mm 0 4mm; color: #1f3864; font-size: 8.5pt; font-weight: 800;
+  line-height: 1.05; letter-spacing: .05em;
+}
+.carte-cr80 td.v-cond { padding: 1mm 4mm 0 4mm; }
+
+/* Une condition par ligne : puce à gauche, texte à droite. */
+.carte-cr80 table.conditions { width: 77.6mm; border-collapse: collapse; margin: 0; }
+.carte-cr80 table.conditions td {
+  border: 0; background: none; padding: 0 0 .5mm 0; vertical-align: top;
+  color: #374151; font-size: 5.4pt; line-height: 1.2;
+}
+.carte-cr80 table.conditions td.puce { width: 3.4mm; color: #6b7280; }
+
+.carte-cr80 td.v-sign-g, .carte-cr80 td.v-sign-d {
+  width: 42.8mm; text-align: center; vertical-align: bottom; padding-bottom: 1mm;
+}
+.carte-cr80 .ligne-signature { height: 6.6mm; border-bottom: 0.25mm solid #9aa3af; margin: 0 4mm; }
+.carte-cr80 .cachet {
+  width: 11mm; height: 11mm; margin: 0 auto; padding-top: 3.8mm;
+  border: 0.3mm dashed #9aa3af; border-radius: 50%;
+  color: #9aa3af; font-size: 4.3pt; font-weight: 700; line-height: 1.1; text-align: center;
+}
+.carte-cr80 .etiquette { display: block; color: #6b7280; font-size: 5.6pt; line-height: 1.12; }
+
+.carte-cr80 td.v-pied {
+  border-top: 0.2mm solid #e2e8f0; padding: 1mm 4mm 0 4mm;
+}
+.carte-cr80 table.pied-verso { width: 77.6mm; border-collapse: collapse; margin: 0; }
+.carte-cr80 table.pied-verso td { border: 0; background: none; padding: 0; vertical-align: top; }
+.carte-cr80 table.pied-verso td.cell-cb   { width: 27mm; text-align: left; }
+.carte-cr80 table.pied-verso td.cell-date {
+  text-align: right; color: #6b7280; font-size: 5.6pt; padding-top: 2.4mm;
+}
+.carte-cr80 table.pied-verso .cb { width: 27mm; text-align: left; height: 3.4mm; }
+
+/* -----------------------------------------------------------------------------
+ * 6. PDF (Dompdf) et pagination de la génération par lot
+ * --------------------------------------------------------------------------- */
+/* En PDF : ni ombre ni bordure (elles ajouteraient 0,3 mm de chaque côté,
+   feraient dépasser la hauteur de page de 54 mm et créeraient une page
+   supplémentaire) ; le liseré est remplacé par un fond blanc uni. */
+.carte-cr80.contexte-pdf { box-shadow: none; border: 0; outline: 0; }
+/* Une face par page : le recto occupe la page 1, le verso la page 2. */
+.carte-cr80.contexte-pdf { page-break-after: always; }
+.carte-cr80.contexte-pdf:last-child { page-break-after: auto; }
+
+/* Un bloc = une page : utilisé par cartes_batch.php (une carte par page). */
+.bloc-page {
+  position: relative;
+  width: 85.6mm; height: 54mm; margin: 0; padding: 0; overflow: hidden;
+  page-break-after: always;
+}
+.bloc-page:last-child { page-break-after: auto; }

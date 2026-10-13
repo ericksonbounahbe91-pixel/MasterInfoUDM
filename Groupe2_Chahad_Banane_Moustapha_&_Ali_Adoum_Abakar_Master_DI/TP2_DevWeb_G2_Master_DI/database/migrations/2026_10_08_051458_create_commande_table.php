@@ -1,0 +1,26 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('commande', function (Blueprint $table) {
+            $table->id('idCmd');
+            $table->date('dateCmd');
+            $table->unsignedBigInteger('idCli'); // même type que client.idCli
+
+            $table->foreign('idCli')
+                  ->references('idCli')->on('client') 
+                  ->onDelete('restrict'); // interdit de supprimer un client qui a des commandes
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('commande');
+    }
+};
