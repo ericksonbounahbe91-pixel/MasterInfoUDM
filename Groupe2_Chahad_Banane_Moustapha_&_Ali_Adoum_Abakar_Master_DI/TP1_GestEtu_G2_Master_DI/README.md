@@ -26,7 +26,7 @@ avec module complet de génération de cartes étudiantes au format CR80
 ```bash
 # 1. Placer le dossier dans htdocs
 cd C:\xampp\htdocs
-# le dossier s'appelle tp5
+# le dossier s'appelle tp1
 
 # 2. Installer les dépendances
 cd C:\xampp\htdocs\tp5
