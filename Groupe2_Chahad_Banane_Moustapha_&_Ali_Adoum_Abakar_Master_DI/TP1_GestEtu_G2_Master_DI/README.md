@@ -9,7 +9,7 @@ avec module complet de génération de cartes étudiantes au format CR80
 | Membre | Compte GitHub |
 |---|---|
 | CHAHAD Banane Moustapha | *@bananefils00* |
-| ALI Adoum Abakar | *(Ali-Adoum-Abakar)* |
+| ALI Adoum Abakar | *Ali-Adoum-Abakar* |
 
 ## Encadrement
 
