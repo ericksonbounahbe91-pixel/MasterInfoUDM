@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Order Manager</string>
+
+    <!-- Auth -->
+    <string name="login_title">Login</string>
+    <string name="login_label">Username</string>
+    <string name="password_label">Password</string>
+    <string name="login_button">Sign In</string>
+    <string name="login_error_empty">Please fill in all fields</string>
+    <string name="login_error_invalid">Invalid username or password</string>
+    <string name="login_success">Welcome!</string>
+
+    <!-- Navigation -->
+    <string name="nav_products">Products</string>
+    <string name="nav_orders">Orders</string>
+    <string name="nav_clients">Clients</string>
+    <string name="nav_dashboard">Dashboard</string>
+
+    <!-- Products -->
+    <string name="products_title">Products</string>
+    <string name="add_product">Add Product</string>
+    <string name="edit_product">Edit Product</string>
+    <string name="product_name">Designation</string>
+    <string name="product_stock">Stock Quantity</string>
+    <string name="product_price">Unit Price</string>
+    <string name="product_photo">Photo</string>
+    <string name="pick_image">Pick Image</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="confirm_delete">Are you sure you want to delete this item?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="product_saved">Product saved successfully</string>
+    <string name="product_deleted">Product deleted successfully</string>
+    <string name="field_required">This field is required</string>
+    <string name="invalid_number">Please enter a valid number</string>
+    <string name="no_products">No products found</string>
+    <string name="search">Search</string>
+    <string name="price_format">$%s</string>
+    <string name="stock_format">Stock: %d</string>
+
+    <!-- Orders -->
+    <string name="orders_title">Orders</string>
+    <string name="add_order">New Order</string>
+    <string name="order_date">Order Date</string>
+    <string name="order_client">Client</string>
+    <string name="order_products">Order Products</string>
+    <string name="add_product_to_order">Add Product to Order</string>
+    <string name="quantity">Quantity</string>
+    <string name="select_product">Select Product</string>
+    <string name="select_client">Select Client</string>
+    <string name="order_saved">Order saved</string>
+    <string name="product_removed">Product removed from order</string>
+    <string name="no_orders">No orders found</string>
+    <string name="order_total">Total: $%s</string>
+    <string name="order_items">%d item(s)</string>
+
+    <!-- Clients -->
+    <string name="clients_title">Clients</string>
+    <string name="no_clients">No clients found</string>
+    <string name="client_email">Email: %s</string>
+    <string name="client_region">Region: %s</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="total_revenue">Total Revenue</string>
+    <string name="total_orders">Total Orders</string>
+    <string name="total_products">Total Products</string>
+    <string name="total_clients">Total Clients</string>
+    <string name="top_products">Top Products</string>
+    <string name="orders_by_client">Orders by Client</string>
+    <string name="revenue_by_region">Revenue by Region</string>
+    <string name="qty_sold">Qty Sold: %d</string>
+    <string name="logout">Logout</string>
+    <string name="confirm_logout">Are you sure you want to logout?</string>
+</resources>

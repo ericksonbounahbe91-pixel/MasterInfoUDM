@@ -1,0 +1,221 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\definecolor{bleu}{HTML}{0b3d91}
+\definecolor{orange}{HTML}{fd7e14}
+
+\hypersetup{colorlinks=true,linkcolor=bleu,urlcolor=bleu}
+
+\titleformat{\section}{\Large\bfseries\color{bleu}}{}{0em}{}[\vspace{-0.5em}\color{bleu}\rule{\textwidth}{0.5pt}]
+\titleformat{\subsection}{\large\bfseries\color{bleu}}{}{0em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{gray}Rapport technique -- TP Examen 1}
+\fancyhead[R]{\small\color{gray}Groupe 25}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+
+% ============ PAGE DE TITRE ============
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+{\Huge\bfseries\color{bleu} Rapport Technique\par}
+\vspace{0.5cm}
+{\LARGE TP Examen 1\par}
+\vspace{1cm}
+{\Large\itshape Gestion d'une ligne de Commande\par}
+\vspace{2cm}
+{\large
+\begin{tabular}{rl}
+\textbf{Groupe :} & 25 \\
+\textbf{Membres :} & Ngomde Cadet Kamdaou \\
+                    & Bediang Leandrine Orline \\
+\textbf{Formation :} & Master DI \\
+\textbf{Institution :} & Universit\'e des Montagnes \\
+\textbf{Date :} & Octobre 2026 \\
+\end{tabular}
+\par}
+\vfill
+{\small Programmation Web -- Ann\'ee acad\'emique 2025--2026}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ============ CONTENU ============
+
+\section{Pr\'esentation du projet}
+
+Ce projet impl\'emente une application web de gestion de commandes en PHP/MySQL.
+Elle permet la cr\'eation, consultation, modification et suppression de produits,
+clients et commandes, avec un tableau de bord statistique pour l'analyse de
+performance des lignes de commande.
+
+L'application r\'epond aux cinq t\^aches du sujet d'examen :
+\begin{enumerate}
+  \item Formulaire d'enregistrement des produits d'une commande
+  \item Affichage des listes (produits, commandes, clients)
+  \item Modification d'un produit
+  \item Suppression d'un produit dans une commande
+  \item Tableau de bord avec statistiques sur les lignes de commande
+\end{enumerate}
+
+
+\section{Architecture de la base de donn\'ees}
+
+Le sch\'ema relationnel suit fid\`element le mod\`ele impos\'e par le sujet :
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{Table} & \textbf{Cl\'e primaire} & \textbf{Cl\'es \'etrang\`eres} & \textbf{R\^ole} \\
+\midrule
+Departement     & idDep (AUTO\_INCREMENT)        & --                        & R\'ef\'erentiel d\'epartements \\
+Region          & idRegion (AUTO\_INCREMENT)      & idDep                     & R\'ef\'erentiel r\'egions \\
+Client          & idCli (AUTO\_INCREMENT)         & idRegion                  & Clients (photo, email unique) \\
+Produit         & idProd (AUTO\_INCREMENT)        & --                        & Catalogue produits \\
+Commande        & idCmd (AUTO\_INCREMENT)         & idCli                     & En-t\^ete de commande \\
+ligneCommande   & (idCmd, idProd)                 & idCmd, idProd             & D\'etail : quantit\'e par produit \\
+\bottomrule
+\end{tabular}
+\caption{Structure des tables}
+\end{table}
+
+\subsection{Choix techniques}
+
+\begin{itemize}
+  \item \textbf{ENGINE=InnoDB} : support des cl\'es \'etrang\`eres et des transactions ACID.
+  \item \textbf{ON DELETE CASCADE} : la suppression d'une commande supprime automatiquement ses lignes, \'evitant les enregistrements orphelins.
+  \item \textbf{UNIQUE KEY sur email} : l'unicit\'e des clients est garantie au niveau base de donn\'ees.
+  \item \textbf{Charset utf8mb4} : support complet des caract\`eres Unicode (accents, caract\`eres sp\'eciaux).
+  \item \textbf{Donn\'ees de test} : le fichier \texttt{schema.sql} ins\`ere 5 d\'epartements, 5 r\'egions, 5 clients, 8 produits, 5 commandes et 12 lignes de commande pour faciliter les tests.
+\end{itemize}
+
+
+\section{Architecture applicative}
+
+\subsection{Organisation des fichiers}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{>{\ttfamily}l l}
+\toprule
+\textbf{Fichier} & \textbf{R\^ole} \\
+\midrule
+config.php              & Connexion PDO, fonctions utilitaires \\
+includes/navbar.php     & Barre de navigation partag\'ee \\
+index.php               & Tableau de bord (KPIs + graphiques) \\
+produits.php            & Liste des produits avec recherche \\
+produit\_form.php       & Formulaire cr\'eation/modification produit \\
+produit\_save.php       & Traitement POST produit \\
+produit\_delete.php     & Suppression produit \\
+clients.php             & Liste des clients avec recherche \\
+client\_form.php        & Formulaire cr\'eation/modification client \\
+client\_save.php        & Traitement POST client \\
+commandes.php           & Liste des commandes \\
+commande\_form.php      & Formulaire nouvelle commande (multi-lignes) \\
+commande\_save.php      & Traitement POST commande (transactionnel) \\
+commande\_detail.php    & D\'etail d'une commande \\
+ligne\_delete.php       & Suppression d'une ligne de commande \\
+uploads/                & Stockage des photos \\
+\bottomrule
+\end{tabular}
+\caption{Fichiers du projet}
+\end{table}
+
+\subsection{Pattern architectural}
+
+L'application suit un pattern \textbf{page-controller} : chaque URL correspond \`a un fichier PHP qui g\`ere la logique m\'etier et le rendu. Les fichiers \texttt{*\_save.php} et \texttt{*\_delete.php} traitent exclusivement les requ\^etes POST et redirigent via \texttt{Location}, appliquant le pattern \textbf{POST/Redirect/GET (PRG)} pour \'eviter les soumissions doubles lors d'un rafra\^ichissement de page.
+
+
+\section{S\'ecurit\'e}
+
+La s\'ecurit\'e repose sur un principe fondamental : \textit{ne jamais faire confiance aux donn\'ees du client}.
+
+\begin{itemize}
+  \item \textbf{Requ\^etes pr\'epar\'ees PDO} : toutes les requ\^etes SQL utilisent des param\`etres li\'es (\texttt{?} ou \texttt{:placeholder}), \'eliminant le risque d'injection SQL.
+  \item \textbf{Protection XSS} : la fonction \texttt{h()} applique \texttt{htmlspecialchars()} avec \texttt{ENT\_QUOTES} sur toute donn\'ee affich\'ee dans le HTML.
+  \item \textbf{Validation serveur} : chaque fichier de traitement revalide les donn\'ees (champs obligatoires, format email, types num\'eriques) ind\'ependamment de la validation JavaScript.
+  \item \textbf{M\'ethode HTTP} : les op\'erations de modification utilisent exclusivement POST ; les fichiers de traitement rejettent les requ\^etes GET avec un code 405.
+  \item \textbf{Upload s\'ecuris\'e} : v\'erification de l'extension, renommage avec \texttt{uniqid()} pour \'eviter l'\'ecrasement et les attaques par nom de fichier.
+\end{itemize}
+
+
+\section{Interface utilisateur}
+
+\subsection{Technologies front-end}
+
+\begin{itemize}
+  \item \textbf{Bootstrap 5.3} : framework CSS responsive, garantissant un affichage correct sur mobile et desktop via le syst\`eme de grille et les composants adaptatifs.
+  \item \textbf{Bootstrap Icons} : ic\^ones vectorielles coh\'erentes dans toute l'interface.
+  \item \textbf{Chart.js 4} : biblioth\`eque de graphiques l\'eg\`ere utilis\'ee pour le tableau de bord.
+\end{itemize}
+
+\subsection{Choix d'ergonomie}
+
+\begin{itemize}
+  \item \textbf{Messages flash} : notifications temporaires stock\'ees en session PHP, affich\'ees une seule fois puis effac\'ees. Cela \'evite les messages persistants apr\`es un rafra\^ichissement.
+  \item \textbf{Calcul en temps r\'eel} : dans le formulaire de commande, les sous-totaux et le total se recalculent instantan\'ement via JavaScript \`a chaque modification de produit ou quantit\'e.
+  \item \textbf{Badges de stock} : code couleur vert ($> 10$), orange ($\leq 10$), rouge ($= 0$) pour rep\'erer rapidement les ruptures.
+  \item \textbf{Confirmation de suppression} : toute action destructrice demande une confirmation utilisateur via \texttt{confirm()}.
+  \item \textbf{Navigation unifi\'ee} : barre de navigation partag\'ee avec d\'etection automatique de la page active.
+\end{itemize}
+
+
+\section{Tableau de bord -- Analyse de performance}
+
+Le tableau de bord (page d'accueil) r\'epond \`a la t\^ache 5 du sujet en proposant une analyse multi-axes :
+
+\begin{enumerate}
+  \item \textbf{4 cartes KPI} : nombre de produits, clients, commandes, et chiffre d'affaires total. Offrent une vue synth\'etique imm\'ediate.
+  \item \textbf{Graphique CA/mois} : diagramme \`a barres combin\'e avec une courbe du nombre de commandes (axe double). Permet de corr\'eler le volume de commandes avec le revenu g\'en\'er\'e et d'identifier les tendances.
+  \item \textbf{Top 5 produits} : diagramme en anneau (doughnut) montrant les produits les plus command\'es en quantit\'e. Utile pour orienter les d\'ecisions d'approvisionnement.
+  \item \textbf{Commandes r\'ecentes} : tableau des 5 derni\`eres commandes avec nombre de lignes et montant.
+  \item \textbf{Alertes stock faible} : produits dont le stock est $\leq 10$, badge rouge pour stock \`a z\'ero. Permet d'anticiper les ruptures.
+  \item \textbf{CA par client} : classement des clients par chiffre d'affaires g\'en\'er\'e avec nombre de commandes, permettant d'identifier les meilleurs clients.
+\end{enumerate}
+
+Cette approche permet une analyse de performance sur quatre axes : \textit{temporel} (tendance mensuelle), \textit{produit} (popularit\'e), \textit{client} (valeur), et \textit{logistique} (gestion des stocks).
+
+
+\section{Gestion des transactions}
+
+La cr\'eation d'une commande implique deux op\'erations :
+\begin{enumerate}
+  \item Insertion de l'en-t\^ete dans la table \texttt{Commande}
+  \item Insertion de chaque ligne dans \texttt{ligneCommande}
+\end{enumerate}
+
+Ces op\'erations sont encapsul\'ees dans une \textbf{transaction} (\texttt{beginTransaction} / \texttt{commit} / \texttt{rollBack}), garantissant l'\textbf{atomicit\'e} : soit la commande compl\`ete est enregistr\'ee, soit rien n'est modifi\'e en cas d'erreur. Cela \'evite les commandes sans lignes ou les lignes orphelines.
+
+
+\section{Instructions de d\'eploiement}
+
+\begin{enumerate}
+  \item Importer \texttt{schema.sql} dans phpMyAdmin avec les identifiants fournis (Login : \texttt{MasTMound2}, Mot de passe : \texttt{MoundMasT2@2026}).
+  \item Placer le dossier \texttt{tpexam1} dans le r\'epertoire \texttt{htdocs} du serveur web (XAMPP, WAMP, etc.).
+  \item V\'erifier que le dossier \texttt{uploads/} est accessible en \'ecriture par le serveur web.
+  \item Ouvrir \texttt{http://localhost/tpexam1/} dans le navigateur.
+\end{enumerate}
+
+\vfill
+\begin{center}
+\small\color{gray}
+Groupe 25 -- TP Examen Programmation Web -- Master DI -- UDM 2026
+\end{center}
+
+\end{document}
