@@ -1,0 +1,14 @@
+# Remplacez le bloc DB_* et ajoutez les 3 dernières lignes dans le fichier .env du projet.
+# Le mot de passe contient des caractères spéciaux (@) : gardez les guillemets.
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=gestionCommandes
+DB_USERNAME=MasTMound2
+DB_PASSWORD="MoundMasT2@2026"
+
+# La base ne contient pas les tables système de Laravel (sessions, cache, jobs) :
+SESSION_DRIVER=file
+CACHE_STORE=file
+QUEUE_CONNECTION=sync
