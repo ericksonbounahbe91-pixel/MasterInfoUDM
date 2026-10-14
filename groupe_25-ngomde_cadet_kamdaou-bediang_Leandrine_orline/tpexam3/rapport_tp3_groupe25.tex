@@ -1,0 +1,376 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\geometry{margin=2.5cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.95}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codepurple}\bfseries,
+    stringstyle=\color{codegreen},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{codegray},
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Groupe 25 -- Master DI}
+\lhead{TP Examen -- Gestion de Commandes}
+\cfoot{\thepage}
+
+\title{
+    \vspace{-1cm}
+    \textbf{Rapport TP Examen} \\
+    \large Gestion d'une Ligne de Commande \\
+    \large Application Android \\
+    \vspace{0.5cm}
+    \normalsize Master DI -- Programmation Web \\
+    Universit\'e de Moundou
+}
+\author{
+    \textbf{Groupe 25} \\
+    Ngomde Cadet Kamdaou \\
+    Bediang Leandrine Orline
+}
+\date{Octobre 2026}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\newpage
+\tableofcontents
+\newpage
+
+%=============================================================================
+\section{Introduction}
+
+Ce rapport pr\'esente la r\'ealisation du TP Examen de Programmation Web, portant sur la \textbf{gestion d'une ligne de commande}. Le projet a \'et\'e d\'evelopp\'e sous forme d'une application mobile Android native utilisant les technologies modernes de l'\'ecosyst\`eme Android.
+
+L'application permet de g\'erer des produits, des commandes, des clients, et offre un tableau de bord statistique complet.
+
+\subsection{Objectifs}
+\begin{enumerate}
+    \item Proposer un formulaire d'enregistrement des produits d'une commande donn\'ee
+    \item Afficher la liste des produits, des commandes et des clients
+    \item Modifier un produit
+    \item Supprimer un produit dans une commande
+    \item R\'ealiser un tableau de bord avec des statistiques sur les lignes de commande
+\end{enumerate}
+
+%=============================================================================
+\section{Technologies et Architecture}
+
+\subsection{Stack technique}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Composant} & \textbf{Technologie} \\
+\midrule
+Langage & Kotlin 2.0 \\
+Interface utilisateur & Jetpack Compose + Material 3 \\
+Base de donn\'ees & Room (SQLite) \\
+Injection de d\'ependances & Koin 3.5 \\
+Navigation & Navigation Compose \\
+Chargement d'images & Coil \\
+Architecture & MVVM + Clean Architecture \\
+Min SDK & API 24 (Android 7.0) \\
+\bottomrule
+\end{tabular}
+\caption{Technologies utilis\'ees}
+\end{table}
+
+\subsection{Architecture Clean Architecture}
+
+L'application suit le patron \textbf{Clean Architecture} avec trois couches bien distinctes par fonctionnalit\'e :
+
+\begin{itemize}
+    \item \textbf{Data} -- Contient les impl\'ementations des repositories, les acc\`es \`a la base de donn\'ees (DAOs, Entities)
+    \item \textbf{Domain} -- Contient les mod\`eles m\'etier, les interfaces des repositories et les cas d'utilisation (use cases)
+    \item \textbf{Presentation} -- Contient les ViewModels, les \'etats UI (State) et les \'ecrans Compose
+\end{itemize}
+
+Le patron \textbf{Repository} assure la s\'eparation entre la source de donn\'ees et la logique m\'etier. Chaque feature poss\`ede son propre ensemble de couches, favorisant la modularit\'e et la testabilit\'e.
+
+\subsection{Pattern MVVM}
+
+Chaque \'ecran suit le patron MVVM :
+\begin{itemize}
+    \item Le \textbf{ViewModel} expose un \texttt{StateFlow} repr\'esentant l'\'etat de l'UI
+    \item L'\'ecran \textbf{Compose} observe cet \'etat via \texttt{collectAsStateWithLifecycle}
+    \item Les actions utilisateur sont propag\'ees au ViewModel via des fonctions
+\end{itemize}
+
+\subsection{Internationalisation}
+
+L'application supporte le \textbf{fran\c{c}ais} et l'\textbf{anglais} gr\^ace \`a :
+\begin{itemize}
+    \item Des fichiers \texttt{strings.xml} dans \texttt{values/} (anglais) et \texttt{values-fr/} (fran\c{c}ais)
+    \item Une classe \texttt{UiText} scell\'ee permettant de manipuler les textes de mani\`ere type-safe
+\end{itemize}
+
+%=============================================================================
+\section{Mod\`ele de donn\'ees}
+
+\subsection{Sch\'ema de la base de donn\'ees}
+
+La base de donn\'ees comporte les tables suivantes :
+
+\begin{itemize}
+    \item \texttt{Client(idCli, nomCli, prenomCli, email, photo, idRegion)}
+    \item \texttt{Commande(idCmd, dateCmd, \#idCli)}
+    \item \texttt{ligneCommande(\#idCmd, \#idProd, qteCmd)} -- cl\'e primaire composite
+    \item \texttt{Produit(idProd, designProd, qteStock, prixUProd, photoProd)}
+    \item \texttt{Region(idRegion, nomRegion, \#idDep)}
+    \item \texttt{D\'epartement(idDep, nomDep)}
+    \item \texttt{Users(id, login, password)} -- pour l'authentification
+\end{itemize}
+
+\subsection{Relations}
+
+\begin{itemize}
+    \item Un \textbf{D\'epartement} contient plusieurs \textbf{R\'egions}
+    \item Une \textbf{R\'egion} contient plusieurs \textbf{Clients}
+    \item Un \textbf{Client} peut passer plusieurs \textbf{Commandes}
+    \item Une \textbf{Commande} contient plusieurs \textbf{Produits} via \texttt{ligneCommande}
+    \item Un \textbf{Produit} peut appara\^itre dans plusieurs \textbf{Commandes}
+\end{itemize}
+
+Les contraintes d'int\'egrit\'e r\'ef\'erentielle sont appliqu\'ees via des \texttt{ForeignKey} Room avec \texttt{CASCADE} sur la suppression.
+
+\subsection{Pr\'e-remplissage}
+
+La base est pr\'e-remplie au premier lancement avec :
+\begin{itemize}
+    \item 1 utilisateur pour l'authentification
+    \item 3 d\'epartements, 5 r\'egions
+    \item 8 clients
+    \item 12 produits
+    \item 10 commandes avec 22 lignes de commande
+\end{itemize}
+
+%=============================================================================
+\section{Fonctionnalit\'es r\'ealis\'ees}
+
+\subsection{Authentification (Feature 0)}
+
+Un \'ecran de connexion permet \`a l'utilisateur de s'authentifier avec les identifiants fournis :
+\begin{itemize}
+    \item \textbf{Login} : \texttt{MasTMound2}
+    \item \textbf{Mot de passe} : \texttt{MoundMasT2@2026}
+\end{itemize}
+
+Fonctionnalit\'es :
+\begin{itemize}
+    \item Validation des champs (champs vides, identifiants incorrects)
+    \item Masquage/affichage du mot de passe
+    \item Messages d'erreur bilingues via \texttt{UiText}
+    \item Redirection automatique apr\`es connexion r\'eussie
+\end{itemize}
+
+\subsection{Gestion des Produits (Features 2 et 3)}
+
+\subsubsection{Liste des produits}
+\begin{itemize}
+    \item Affichage en liste avec photo, d\'esignation, prix et stock
+    \item Barre de recherche en temps r\'eel (filtre par d\'esignation)
+    \item \'Etat vide avec ic\^one quand aucun produit
+\end{itemize}
+
+\subsubsection{Ajout / Modification d'un produit}
+\begin{itemize}
+    \item Formulaire avec : d\'esignation, quantit\'e en stock, prix unitaire
+    \item S\'election de photo depuis la galerie (stock\'ee en fichier local)
+    \item Validation des champs avec messages d'erreur
+    \item M\^eme \'ecran pour l'ajout et la modification (d\'etection via param\`etre de navigation)
+\end{itemize}
+
+\subsubsection{Suppression d'un produit}
+\begin{itemize}
+    \item Bo\^ite de dialogue de confirmation avant suppression
+    \item Suppression en cascade des lignes de commande associ\'ees
+\end{itemize}
+
+\subsection{Gestion des Commandes (Features 1 et 4)}
+
+\subsubsection{Liste des commandes}
+\begin{itemize}
+    \item Affichage avec num\'ero, date, nom du client, nombre d'articles et total
+    \item Calcul automatique du montant total via jointure SQL
+    \item Suppression avec confirmation
+\end{itemize}
+
+\subsubsection{Cr\'eation d'une commande}
+\begin{itemize}
+    \item S\'election du client via menu d\'eroulant
+    \item Date automatique (timestamp actuel)
+    \item Redirection vers le d\'etail apr\`es cr\'eation
+\end{itemize}
+
+\subsubsection{D\'etail d'une commande -- Enregistrement des produits}
+\begin{itemize}
+    \item Affichage des lignes de commande (produit, quantit\'e, prix, sous-total)
+    \item Ajout d'un produit via bo\^ite de dialogue (s\'election produit + quantit\'e)
+    \item Suppression d'un produit de la commande
+    \item Affichage du montant total de la commande
+\end{itemize}
+
+\subsection{Liste des Clients (Feature 2)}
+
+\begin{itemize}
+    \item Affichage en cartes avec photo, nom complet, email et r\'egion
+    \item Jointure SQL avec la table \texttt{region} pour afficher le nom de la r\'egion
+    \item Donn\'ees issues du pr\'e-remplissage
+\end{itemize}
+
+\subsection{Tableau de Bord (Feature 5)}
+
+Le tableau de bord offre une vue analytique compl\`ete avec les statistiques suivantes :
+
+\subsubsection{Indicateurs cl\'es (KPI)}
+\begin{itemize}
+    \item \textbf{Chiffre d'affaires total} -- somme de (quantit\'e $\times$ prix unitaire) sur toutes les lignes
+    \item \textbf{Nombre total de commandes}
+    \item \textbf{Nombre total de produits}
+    \item \textbf{Nombre total de clients}
+\end{itemize}
+
+\subsubsection{Top 5 des produits les plus vendus}
+Requ\^ete agr\'eg\'ee par produit, tri\'ee par quantit\'e totale vendue, avec le chiffre d'affaires g\'en\'er\'e par chaque produit.
+
+\subsubsection{Chiffre d'affaires par r\'egion}
+Visualisation sous forme de barres horizontales proportionnelles, calculant le revenu total par r\'egion \`a travers la cha\^ine : R\'egion $\rightarrow$ Client $\rightarrow$ Commande $\rightarrow$ Ligne de commande $\rightarrow$ Produit.
+
+\subsubsection{Commandes par client}
+Tableau montrant pour chaque client le nombre de commandes et le montant total d\'epens\'e.
+
+\subsubsection{Performance mensuelle}
+Regroupement des commandes par mois avec le nombre de commandes et le revenu g\'en\'er\'e, sous forme de barres horizontales.
+
+\subsubsection{Justification des choix}
+Le tableau de bord a \'et\'e con\c{c}u pour offrir une vision \`a plusieurs niveaux :
+\begin{itemize}
+    \item \textbf{Vue macro} : les KPI donnent un aper\c{c}u instantan\'e de l'activit\'e
+    \item \textbf{Vue produit} : identifier les best-sellers pour optimiser le stock
+    \item \textbf{Vue g\'eographique} : comprendre la r\'epartition du CA par r\'egion
+    \item \textbf{Vue client} : identifier les clients les plus actifs
+    \item \textbf{Vue temporelle} : d\'etecter les tendances et la saisonnalit\'e
+\end{itemize}
+
+Les requ\^etes SQL sont optimis\'ees avec des jointures et agr\'egations directement au niveau de la base, \'evitant le traitement c\^ot\'e applicatif.
+
+%=============================================================================
+\section{Structure du Projet}
+
+\begin{lstlisting}[language={}, title={Arborescence des packages}]
+com.groupe25.tpexam3/
+|-- core/
+|   |-- data/local/
+|   |   |-- dao/         (UserDao, ProductDao, ClientDao,
+|   |   |                 CommandeDao, LigneCommandeDao,
+|   |   |                 DashboardDao)
+|   |   |-- entity/      (7 entites Room)
+|   |   |-- AppDatabase.kt
+|   |-- presentation/
+|       |-- UiText.kt
+|-- di/
+|   |-- AppModule.kt     (configuration Koin)
+|-- feature/
+|   |-- auth/
+|   |   |-- data/repository/AuthRepositoryImpl.kt
+|   |   |-- domain/model/User.kt
+|   |   |-- domain/repository/AuthRepository.kt
+|   |   |-- domain/usecase/LoginUseCase.kt
+|   |   |-- presentation/LoginScreen.kt
+|   |   |-- presentation/LoginViewModel.kt
+|   |-- product/
+|   |   |-- data/repository/ProductRepositoryImpl.kt
+|   |   |-- domain/model/Product.kt
+|   |   |-- domain/repository/ProductRepository.kt
+|   |   |-- presentation/list/ProductListScreen.kt
+|   |   |-- presentation/addedit/AddEditProductScreen.kt
+|   |-- order/
+|   |   |-- data/repository/OrderRepositoryImpl.kt
+|   |   |-- domain/model/Order.kt, OrderLine.kt
+|   |   |-- domain/repository/OrderRepository.kt
+|   |   |-- presentation/list/OrderListScreen.kt
+|   |   |-- presentation/detail/OrderDetailScreen.kt
+|   |   |-- presentation/create/CreateOrderScreen.kt
+|   |-- client/
+|   |   |-- presentation/ClientListScreen.kt
+|   |-- dashboard/
+|       |-- presentation/DashboardScreen.kt
+|-- navigation/
+|   |-- Screen.kt, BottomNavItem
+|-- ui/theme/Theme.kt
+|-- MainActivity.kt
+|-- TpExamApp.kt
+\end{lstlisting}
+
+%=============================================================================
+\section{Injection de d\'ependances}
+
+Koin est configur\'e dans un module unique \texttt{AppModule.kt} qui fournit :
+\begin{itemize}
+    \item L'instance singleton de la base de donn\'ees \texttt{AppDatabase}
+    \item Tous les DAOs en tant que singletons
+    \item Les repositories en tant que singletons
+    \item Les use cases en tant que factory
+    \item Les ViewModels avec \texttt{viewModel \{ \}}
+\end{itemize}
+
+%=============================================================================
+\section{Navigation}
+
+L'application utilise une \textbf{Bottom Navigation Bar} avec 4 onglets :
+\begin{enumerate}
+    \item \textbf{Produits} -- Liste et CRUD des produits
+    \item \textbf{Commandes} -- Liste, cr\'eation et d\'etail des commandes
+    \item \textbf{Clients} -- Liste des clients
+    \item \textbf{Tableau de bord} -- Statistiques et d\'econnexion
+\end{enumerate}
+
+Les \'ecrans secondaires (ajout/modification produit, d\'etail commande, cr\'eation commande) s'ouvrent sans la barre de navigation pour une exp\'erience utilisateur fluide.
+
+%=============================================================================
+\section{Conclusion}
+
+Ce projet a permis de d\'evelopper une application mobile Android compl\`ete r\'epondant \`a l'ensemble des exigences du TP Examen. L'utilisation de Clean Architecture avec le pattern Repository assure une s\'eparation claire des responsabilit\'es, facilitant la maintenance et l'\'evolution du code.
+
+Les points forts de la r\'ealisation :
+\begin{itemize}
+    \item Architecture modulaire et extensible
+    \item Interface utilisateur moderne avec Material 3
+    \item Support bilingue (fran\c{c}ais / anglais)
+    \item Tableau de bord analytique riche avec des requ\^etes SQL optimis\'ees
+    \item Gestion compl\`ete du cycle de vie des donn\'ees (CRUD)
+    \item Pr\'e-remplissage de la base pour une d\'emonstration imm\'ediate
+\end{itemize}
+
+\end{document}

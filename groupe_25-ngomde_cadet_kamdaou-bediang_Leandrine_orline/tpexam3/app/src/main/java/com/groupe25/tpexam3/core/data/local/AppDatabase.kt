@@ -5,6 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.groupe25.tpexam3.core.data.local.dao.ClientDao
+import com.groupe25.tpexam3.core.data.local.dao.CommandeDao
+import com.groupe25.tpexam3.core.data.local.dao.DashboardDao
+import com.groupe25.tpexam3.core.data.local.dao.LigneCommandeDao
 import com.groupe25.tpexam3.core.data.local.dao.ProductDao
 import com.groupe25.tpexam3.core.data.local.dao.UserDao
 import com.groupe25.tpexam3.core.data.local.entity.ClientEntity
@@ -35,6 +39,10 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun productDao(): ProductDao
+    abstract fun clientDao(): ClientDao
+    abstract fun commandeDao(): CommandeDao
+    abstract fun ligneCommandeDao(): LigneCommandeDao
+    abstract fun dashboardDao(): DashboardDao
 
     companion object {
         fun create(context: Context): AppDatabase {
