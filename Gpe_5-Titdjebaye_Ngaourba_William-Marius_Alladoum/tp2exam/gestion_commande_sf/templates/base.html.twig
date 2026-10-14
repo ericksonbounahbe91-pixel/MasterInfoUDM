@@ -1,0 +1,51 @@
+{% import '_macros.html.twig' as ui %}
+{% set route = app.request.attributes.get('_route') ?? '' %}
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Gestion des commandes{% endblock %} – Gestion des commandes</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232457D6'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+</head>
+<body>
+<div class="app">
+    <aside class="barre-laterale">
+        <a class="marque" href="{{ path('app_dashboard') }}">
+            <span class="logo">{{ ui.icone('produit', 22) }}</span>
+            <span><strong>Commandes</strong><small>Gestion &amp; statistiques</small></span>
+        </a>
+        <p class="nav-titre">Navigation</p>
+        <nav aria-label="Navigation principale">
+            <a href="{{ path('app_dashboard') }}"{{ (route starts with 'app_dashboard') ? ' aria-current=page' : '' }}>{{ ui.icone('tableau') }}<span>Tableau de bord</span></a>
+            <a href="{{ path('app_commande_index') }}"{{ (route starts with 'app_commande') ? ' aria-current=page' : '' }}>{{ ui.icone('commande') }}<span>Commandes</span></a>
+            <a href="{{ path('app_produit_index') }}"{{ (route starts with 'app_produit') ? ' aria-current=page' : '' }}>{{ ui.icone('produit') }}<span>Produits</span></a>
+            <a href="{{ path('app_client_index') }}"{{ (route starts with 'app_client') ? ' aria-current=page' : '' }}>{{ ui.icone('client') }}<span>Clients</span></a>
+        </nav>
+        <div class="bas-barre">
+            <strong>TP Examen 2026</strong>
+            <span>Développement Web · Symfony {{ constant('Symfony\\Component\\HttpKernel\\Kernel::VERSION') }}</span>
+        </div>
+    </aside>
+
+    <div class="contenu">
+        <div class="topbar">
+            <span class="fil">Accueil <span aria-hidden="true">/</span> <strong>{% block fil %}{% endblock %}</strong></span>
+            <span class="date">{{ 'now'|date('d/m/Y') }}</span>
+        </div>
+        <main>
+            {# Messages « flash » posés par les contrôleurs avec addFlash() #}
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <p class="message {{ type == 'success' ? 'ok' : 'erreur' }}" role="status">{{ message }}</p>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+        </main>
+        <footer class="pied">Application Symfony · le temps de génération et le nombre de requêtes SQL sont visibles dans la barre de débogage en bas de page (mode dev).</footer>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Remplace config/packages/twig.yaml
+twig:
+    file_name_pattern: '*.twig'
+    form_themes:
+        - 'form/theme.html.twig'          # notre habillage des formulaires
+    globals:
+        seuil_stock: '%seuil_stock%'      # disponible dans tous les templates
+
+when@test:
+    twig:
+        strict_variables: true

@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block title %}Commande n° {{ commande.id }}{% endblock %}
+{% block fil %}Commande n° {{ commande.id }}{% endblock %}
+
+{% block body %}
+<div class="titre-page">
+    <div><h1>Commande n° {{ commande.id }}</h1><p class="sous-titre">{{ commande.lignes|length }} produit(s) dans cette commande</p></div>
+    <a class="bouton secondaire" href="{{ path('app_commande_index') }}">{{ ui.icone('retour', 18) }}Toutes les commandes</a>
+</div>
+
+<dl class="fiche">
+    <div><dt>Client</dt><dd>{{ commande.client.nomComplet }}</dd></div>
+    <div><dt>Date</dt><dd>{{ commande.dateCommande|date('d/m/Y') }}</dd></div>
+    <div><dt>E-mail</dt><dd>{{ commande.client.email ?? '—' }}</dd></div>
+    <div><dt>Total</dt><dd><strong>{{ commande.total|fcfa }}</strong></dd></div>
+</dl>
+
+<section class="bloc" aria-labelledby="t-lignes">
+    <h2 id="t-lignes">Produits de la commande</h2>
+    {% if commande.lignes is empty %}
+        <p class="vide-texte">Cette commande ne contient encore aucun produit. Utilisez le formulaire ci-dessous.</p>
+    {% else %}
+        <div class="tableau-conteneur">
+            <table>
+                <thead><tr><th scope="col">Produit</th><th scope="col" class="num">Quantité</th><th scope="col" class="num">Prix unitaire</th><th scope="col" class="num">Sous-total</th><th scope="col"></th></tr></thead>
+                <tbody>
+                {% for l in commande.lignes %}
+                    <tr>
+                        <td>{{ l.produit.designation }}</td>
+                        <td class="num">{{ l.quantite }}</td>
+                        <td class="num">{{ l.produit.prixUnitaire|fcfa }}</td>
+                        <td class="num">{{ l.sousTotal|fcfa }}</td>
+                        <td class="actions">
+                            <form method="post" action="{{ path('app_commande_ligne_supprimer', {id: commande.id, ligne: l.id}) }}"
+                                  onsubmit="return confirm('Retirer ce produit de la commande ? Le stock sera rétabli.');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('supprimer_ligne_' ~ l.id) }}">
+                                <button type="submit" class="lien-danger">{{ ui.icone('retirer', 16) }}Retirer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot><tr><th scope="row" colspan="3">Total de la commande</th><td class="num"><strong>{{ commande.total|fcfa }}</strong></td><td></td></tr></tfoot>
+            </table>
+        </div>
+    {% endif %}
+</section>
+
+<section class="bloc" aria-labelledby="t-ajout">
+    <h2 id="t-ajout">Enregistrer des produits dans cette commande</h2>
+    {{ form_start(form, {attr: {class: 'formulaire'}}) }}
+        {# Le widget « collection » affiche les lignes existantes et fournit un modèle (data-prototype) pour en ajouter #}
+        {{ form_widget(form.lignes) }}
+        <div class="barre-actions">
+            <button type="button" class="secondaire" id="ajouter-ligne">{{ ui.icone('plus', 18) }}Ajouter une ligne</button>
+            <button type="submit">{{ ui.icone('check', 18) }}Enregistrer les produits</button>
+        </div>
+    {{ form_end(form) }}
+</section>
+
+<script>
+(function () {
+    var zone = document.querySelector('.collection-lignes');
+    var index = zone.querySelectorAll('.ligne-bloc').length;   // prochain numéro de ligne
+
+    document.getElementById('ajouter-ligne').addEventListener('click', function () {
+        // __name__ est remplacé par le numéro : c'est ainsi que Symfony reconnaît la ligne à l'envoi
+        zone.insertAdjacentHTML('beforeend', zone.dataset.prototype.replace(/__name__/g, index++));
+    });
+
+    zone.addEventListener('click', function (e) {
+        if (!e.target.classList.contains('retirer')) { return; }
+        var blocs = zone.querySelectorAll('.ligne-bloc');
+        if (blocs.length > 1) {
+            e.target.closest('.ligne-bloc').remove();
+        } else {                                               // dernière ligne : on la vide seulement
+            blocs[0].querySelector('select').value = '';
+            blocs[0].querySelector('input').value = '';
+        }
+    });
+})();
+</script>
+{% endblock %}

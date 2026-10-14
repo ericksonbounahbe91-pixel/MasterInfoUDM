@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des clients</title>
+</head>
+<body>
+    <h1>Liste des clients</h1>
+
+    <table border="1" cellpadding="6">
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Région</th>
+            <th>Département</th>
+        </tr>
+        @forelse ($clients as $client)
+            <tr>
+                <td>{{ $client->nomCli }}</td>
+                <td>{{ $client->prenomCli }}</td>
+                <td>{{ $client->email }}</td>
+                <td>{{ $client->region->nomRegion }}</td>
+                <td>{{ $client->region->departement->nomDep }}</td>
+            </tr>
+        @empty
+            <tr><td colspan="5">Aucun client.</td></tr>
+        @endforelse
+    </table>
+</body>
+</html>

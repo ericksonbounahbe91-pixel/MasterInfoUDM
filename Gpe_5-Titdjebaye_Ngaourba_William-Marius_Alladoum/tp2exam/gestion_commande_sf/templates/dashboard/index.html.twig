@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block title %}Tableau de bord{% endblock %}
+{% block fil %}Tableau de bord{% endblock %}
+
+{% block body %}
+<div class="titre-page"><div><h1>Tableau de bord</h1><p class="sous-titre">Ventes du {{ du|date('d/m/Y') }} au {{ au|date('d/m/Y') }}</p></div></div>
+
+<form method="get" class="formulaire en-ligne filtre">
+    <div class="champ"><label for="du">Du</label><input type="date" id="du" name="du" value="{{ du }}"></div>
+    <div class="champ"><label for="au">Au</label><input type="date" id="au" name="au" value="{{ au }}"></div>
+    <button type="submit">Actualiser</button>
+</form>
+
+{% if k.nb_cmd == 0 %}
+    <p class="vide-texte">Aucune commande avec produits sur cette période. Modifiez les dates ou <a href="{{ path('app_commande_index') }}">enregistrez une commande</a>.</p>
+{% else %}
+    {% set cartes = [
+        {icone: 'argent',   libelle: "Chiffre d'affaires", valeur: k.ca|fcfa,                       ton: 'bleu'},
+        {icone: 'commande', libelle: 'Commandes',          valeur: k.nb_cmd,                         ton: 'indigo'},
+        {icone: 'panier',   libelle: 'Panier moyen',       valeur: k.panier|fcfa,                    ton: 'ambre'},
+        {icone: 'unites',   libelle: 'Unités vendues',     valeur: k.qte|number_format(0, ',', ' '), ton: 'vert'},
+        {icone: 'client',   libelle: 'Clients actifs',     valeur: k.nb_cli,                         ton: 'cyan'},
+    ] %}
+    <div class="indicateurs">
+        {% for c in cartes %}
+            <div class="kpi {{ c.ton }}">
+                <span class="kpi-icone">{{ ui.icone(c.icone, 24) }}</span>
+                <div><p class="kpi-lib">{{ c.libelle }}</p><p class="kpi-val">{{ c.valeur }}</p></div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <section class="bloc" aria-labelledby="t-mois">
+        <h2 id="t-mois">Chiffre d'affaires par mois</h2>
+        {# Histogramme SVG : la géométrie est calculée ici à partir du pourcentage fourni par le service #}
+        {% set w = 680 %}{% set h = 240 %}{% set marge = 24 %}
+        {% set base = h - 34 %}{% set haut = base - 34 %}
+        {% set pas = (w - 2 * marge) / mensuel|length %}
+        {% set lb = min(64, pas * 0.7) %}
+        <svg class="graph" viewBox="0 0 {{ w }} {{ h }}" role="img" aria-label="Chiffre d'affaires par mois">
+            <defs><linearGradient id="gcol" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5B8DEF"/><stop offset="1" stop-color="#2457D6"/></linearGradient></defs>
+            <line x1="{{ marge }}" y1="{{ base }}" x2="{{ w - marge }}" y2="{{ base }}" class="axe"/>
+            <line x1="{{ marge }}" y1="{{ base - haut / 2 }}" x2="{{ w - marge }}" y2="{{ base - haut / 2 }}" class="grille"/>
+            <line x1="{{ marge }}" y1="{{ base - haut }}" x2="{{ w - marge }}" y2="{{ base - haut }}" class="grille"/>
+            {% for m in mensuel %}
+                {% set bh = max(2, (m.pct / 100) * haut) %}
+                {% set x = marge + loop.index0 * pas + (pas - lb) / 2 %}
+                {% set y = base - bh %}
+                {% set cx = x + lb / 2 %}
+                <rect x="{{ x|round(1) }}" y="{{ y|round(1) }}" width="{{ lb|round(1) }}" height="{{ bh|round(1) }}" rx="5" class="colonne"><title>{{ m.mois }} : {{ m.ca|fcfa }} ({{ m.nb }} commande(s))</title></rect>
+                <text x="{{ cx|round(1) }}" y="{{ (y - 6)|round(1) }}" text-anchor="middle" class="valeur">{{ (m.ca / 1000)|number_format(0, ',', ' ') }} k</text>
+                <text x="{{ cx|round(1) }}" y="{{ base + 18 }}" text-anchor="middle" class="mois">{{ m.mois }}</text>
+            {% endfor %}
+        </svg>
+    </section>
+
+    <div class="deux-colonnes">
+        <section class="bloc" aria-labelledby="t-prod">
+            <h2 id="t-prod">Cinq produits qui rapportent le plus</h2>
+            {{ ui.barres(topProduits) }}
+            <p class="note">Ces cinq produits représentent {{ partTop }} % du chiffre d'affaires de la période.</p>
+        </section>
+        <section class="bloc" aria-labelledby="t-dep">
+            <h2 id="t-dep">Chiffre d'affaires par département</h2>
+            {{ ui.barres(parDepartement) }}
+        </section>
+    </div>
+
+    <div class="deux-colonnes">
+        <section class="bloc" aria-labelledby="t-cli">
+            <h2 id="t-cli">Cinq meilleurs clients</h2>
+            {{ ui.barres(topClients) }}
+        </section>
+        <section class="bloc" aria-labelledby="t-stock">
+            <h2 id="t-stock">Produits à réapprovisionner</h2>
+            {% if stockBas is empty %}
+                <p class="vide-texte">Aucun produit sous le seuil de {{ seuil_stock }} unités.</p>
+            {% else %}
+                <ul class="liste-stock">
+                    {% for s in stockBas %}
+                        <li><span>{{ s.designation }}</span>
+                            <span class="etiquette {{ s.stock <= 0 ? 'rouge' : 'ambre' }}">{{ s.stock <= 0 ? 'Rupture' : s.stock ~ ' en stock' }}</span></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <p class="note">Seuil d'alerte : {{ seuil_stock }} unités (paramètre <code>seuil_stock</code> dans <code>config/services.yaml</code>).</p>
+        </section>
+    </div>
+{% endif %}
+
+<section class="bloc" aria-labelledby="t-perf">
+    <h2 id="t-perf">Analyse de performance</h2>
+    <p>Les calculs sont faits par MySQL (<code>SUM</code>, <code>COUNT</code>, <code>GROUP BY</code>) et PHP ne reçoit que quelques lignes de résultat. L'index <code>idx_commande_date</code> accélère le filtre par période, et les clés étrangères sont indexées automatiquement par Doctrine.</p>
+    <p class="note">Pour mesurer : ouvrez la barre de débogage Symfony en bas de page (mode dev) → icône base de données = nombre de requêtes et durée de chacune, avec un bouton « Explain » pour voir le plan d'exécution.</p>
+</section>
+{% endblock %}
