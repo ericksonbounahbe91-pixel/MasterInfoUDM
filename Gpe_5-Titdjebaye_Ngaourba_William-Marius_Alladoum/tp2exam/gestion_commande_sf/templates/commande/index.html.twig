@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block title %}Commandes{% endblock %}
+{% block fil %}Commandes{% endblock %}
+
+{% block body %}
+<div class="titre-page"><div><h1>Commandes</h1><p class="sous-titre">{{ commandes|length }} commande(s) enregistrée(s)</p></div></div>
+
+<section class="bloc" aria-labelledby="t-nouvelle">
+    <h2 id="t-nouvelle">Nouvelle commande</h2>
+    {{ form_start(form, {attr: {class: 'formulaire en-ligne'}}) }}
+        {{ form_row(form.client) }}
+        {{ form_row(form.dateCommande) }}
+        <button type="submit">{{ ui.icone('plus', 18) }}Créer la commande</button>
+    {{ form_end(form) }}
+</section>
+
+{% if commandes is empty %}
+    <p class="vide-texte">Aucune commande pour le moment. Créez la première ci-dessus.</p>
+{% else %}
+    <div class="tableau-conteneur">
+        <table>
+            <thead><tr><th scope="col">N°</th><th scope="col">Date</th><th scope="col">Client</th><th scope="col" class="num">Produits</th><th scope="col" class="num">Montant</th><th scope="col"></th></tr></thead>
+            <tbody>
+            {% for c in commandes %}
+                <tr>
+                    <td>{{ c.id }}</td>
+                    <td>{{ c.date_commande|date('d/m/Y') }}</td>
+                    <td>{{ c.nom }} {{ c.prenom }}</td>
+                    <td class="num">{{ c.nb_lignes }}</td>
+                    <td class="num">{{ c.montant|fcfa }}</td>
+                    <td class="actions"><a class="lien-action" href="{{ path('app_commande_show', {id: c.id}) }}">Ouvrir{{ ui.icone('ouvrir', 16) }}</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

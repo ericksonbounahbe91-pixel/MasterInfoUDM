@@ -1,0 +1,30 @@
+{# Thème de formulaire : réutilise celui de Symfony et change seulement l'habillage HTML. #}
+{% extends 'form_div_layout.html.twig' %}
+
+{# Chaque champ : <div class="champ"> label + widget + erreurs #}
+{% block form_row -%}
+    <div class="champ">
+        {{- form_label(form) -}}
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row %}
+
+{# Une ligne « produit + quantité + bouton retirer » du formulaire d'ajout de produits #}
+{% block ligne_saisie_row -%}
+    {{- form_widget(form) -}}
+{%- endblock ligne_saisie_row %}
+
+{% block ligne_saisie_widget -%}
+    <div class="ligne-bloc">
+        <div class="ligne-saisie">
+            {{- form_widget(form.produit) -}}
+            {{- form_widget(form.quantite) -}}
+            <button type="button" class="secondaire retirer">Retirer</button>
+        </div>
+        {{- form_errors(form) -}}
+        {{- form_errors(form.produit) -}}
+        {{- form_errors(form.quantite) -}}
+    </div>
+{%- endblock ligne_saisie_widget %}

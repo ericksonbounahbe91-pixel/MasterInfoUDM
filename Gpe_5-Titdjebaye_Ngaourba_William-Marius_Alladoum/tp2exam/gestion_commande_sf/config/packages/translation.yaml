@@ -1,0 +1,7 @@
+# Remplace config/packages/translation.yaml : interface et messages de validation en français
+framework:
+    default_locale: fr
+    translator:
+        default_path: '%kernel.project_dir%/translations'
+        fallbacks:
+            - fr

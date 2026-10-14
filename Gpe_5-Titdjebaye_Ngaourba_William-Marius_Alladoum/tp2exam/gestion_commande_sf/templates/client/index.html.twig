@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block title %}Clients{% endblock %}
+{% block fil %}Clients{% endblock %}
+
+{% block body %}
+<div class="titre-page"><div><h1>Clients</h1><p class="sous-titre">{{ clients|length }} client(s) enregistré(s)</p></div></div>
+
+{% if clients is empty %}
+    <p class="vide-texte">Aucun client enregistré dans la base.</p>
+{% else %}
+    <div class="tableau-conteneur">
+        <table>
+            <thead><tr><th scope="col"></th><th scope="col">N°</th><th scope="col">Nom et prénom</th><th scope="col">E-mail</th><th scope="col">Région</th><th scope="col">Département</th><th scope="col" class="num">Commandes</th><th scope="col" class="num">Montant total</th></tr></thead>
+            <tbody>
+            {% for c in clients %}
+                <tr>
+                    <td>{{ ui.vignette(c.photo, c.prenom) }}</td>
+                    <td>{{ c.id }}</td>
+                    <td>{{ c.nom }} {{ c.prenom }}</td>
+                    <td>{{ c.email }}</td>
+                    <td>{{ c.region ?? '—' }}</td>
+                    <td>{{ c.departement ?? '—' }}</td>
+                    <td class="num">{{ c.nb_commandes }}</td>
+                    <td class="num">{{ c.total|fcfa }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}

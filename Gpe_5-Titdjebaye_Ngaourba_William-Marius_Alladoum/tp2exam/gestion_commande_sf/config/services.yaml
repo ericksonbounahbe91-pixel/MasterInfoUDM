@@ -1,0 +1,16 @@
+# Remplace config/services.yaml du projet : même contenu que le squelette + 2 paramètres.
+parameters:
+    uploads_dir: '%kernel.project_dir%/public/uploads'
+    seuil_stock: 10          # en dessous : produit « à surveiller »
+
+services:
+    _defaults:
+        autowire: true       # Symfony injecte lui-même les dépendances (types du constructeur)
+        autoconfigure: true  # Symfony reconnaît les extensions Twig, formulaires, etc.
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Dto/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'

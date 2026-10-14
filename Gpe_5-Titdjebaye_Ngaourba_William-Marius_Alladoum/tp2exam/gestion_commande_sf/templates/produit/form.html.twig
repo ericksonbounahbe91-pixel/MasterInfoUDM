@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block title %}{{ titre }}{% endblock %}
+{% block fil %}{{ titre }}{% endblock %}
+
+{% block body %}
+<div class="titre-page"><div><h1>{{ titre }}</h1><p class="sous-titre">Renseignez la désignation, le stock et le prix unitaire.</p></div></div>
+
+{{ form_start(form, {attr: {class: 'formulaire'}}) }}
+    {{ form_row(form.designation) }}
+    {{ form_row(form.stock) }}
+    {{ form_row(form.prixUnitaire) }}
+    {% if produit.photo %}
+        <div class="photo-actuelle">{{ ui.vignette(produit.photo, produit.designation) }} <span>Photo actuelle. Choisissez un fichier pour la remplacer.</span></div>
+    {% endif %}
+    {{ form_row(form.photoFichier) }}
+    <div class="barre-actions">
+        <button type="submit">{{ ui.icone('check', 18) }}{{ produit.id ? 'Enregistrer les modifications' : 'Ajouter le produit' }}</button>
+        <a class="bouton secondaire" href="{{ path('app_produit_index') }}">Annuler</a>
+    </div>
+{{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% import '_macros.html.twig' as ui %}
+{% block title %}Produits{% endblock %}
+{% block fil %}Produits{% endblock %}
+
+{% block body %}
+<div class="titre-page">
+    <div><h1>Produits</h1><p class="sous-titre">{{ produits|length }} produit(s) {{ q != '' ? 'pour « ' ~ q ~ ' »' : 'au catalogue' }}</p></div>
+    <a class="bouton" href="{{ path('app_produit_new') }}">{{ ui.icone('plus', 18) }}Nouveau produit</a>
+</div>
+
+<form method="get" class="recherche">
+    <label for="q">Rechercher un produit</label>
+    <input type="search" id="q" name="q" value="{{ q }}" placeholder="Désignation">
+    <button type="submit" class="secondaire">Rechercher</button>
+</form>
+
+{% if produits is empty %}
+    <p class="vide-texte">Aucun produit trouvé. <a href="{{ path('app_produit_new') }}">Ajouter un produit</a>.</p>
+{% else %}
+    <div class="tableau-conteneur">
+        <table>
+            <thead><tr><th scope="col"></th><th scope="col">N°</th><th scope="col">Désignation</th><th scope="col" class="num">Stock</th><th scope="col" class="num">Prix unitaire</th><th scope="col"></th></tr></thead>
+            <tbody>
+            {% for p in produits %}
+                <tr>
+                    <td>{{ ui.vignette(p.photo, p.designation) }}</td>
+                    <td>{{ p.id }}</td>
+                    <td>{{ p.designation }}</td>
+                    <td class="num">{{ p.stock }}
+                        {% if p.stock <= 0 %}<span class="etiquette rouge">Rupture</span>
+                        {% elseif p.stock <= seuil_stock %}<span class="etiquette ambre">Stock bas</span>{% endif %}
+                    </td>
+                    <td class="num">{{ p.prixUnitaire|fcfa }}</td>
+                    <td class="actions"><a class="lien-action" href="{{ path('app_produit_edit', {id: p.id}) }}">{{ ui.icone('modifier', 16) }}Modifier</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}
