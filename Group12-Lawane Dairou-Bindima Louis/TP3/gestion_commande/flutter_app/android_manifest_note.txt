@@ -1,0 +1,7 @@
+Pour Android, dans android/app/src/main/AndroidManifest.xml, ajouter dans <manifest> :
+<uses-permission android:name="android.permission.INTERNET" />
+
+Et dans la balise <application ...>, ajouter :
+android:usesCleartextTraffic="true"
+
+Cela autorise HTTP uniquement pour les tests locaux. En production, préférer HTTPS.

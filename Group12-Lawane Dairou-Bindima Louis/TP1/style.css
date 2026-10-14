@@ -1,0 +1,43 @@
+/* TP5 – thème de couleurs (indigo / turquoise) */
+:root {
+  --c-primary: #4f46e5;  --c-primary-dark: #3730a3;
+  --c-accent:  #14b8a6;
+  --c-bg:      #f1f5ff;  --c-text: #1e293b;
+  --bs-primary: var(--c-primary); --bs-primary-rgb: 79,70,229;
+  --bs-link-color: var(--c-primary); --bs-link-hover-color: var(--c-primary-dark);
+}
+body { background: var(--c-bg) !important; color: var(--c-text); }
+
+/* Bandeau de titre */
+.bandeau { background: linear-gradient(135deg, var(--c-primary-dark), var(--c-primary) 60%, var(--c-accent));
+           color: #fff; border-radius: .75rem; padding: 1rem 1.25rem; box-shadow: 0 4px 12px rgba(79,70,229,.25); }
+.bandeau h1 { color: #fff !important; }
+
+/* Boutons */
+.btn-primary { --bs-btn-bg: var(--c-primary); --bs-btn-border-color: var(--c-primary);
+  --bs-btn-hover-bg: var(--c-primary-dark); --bs-btn-hover-border-color: var(--c-primary-dark);
+  --bs-btn-active-bg: var(--c-primary-dark); --bs-btn-active-border-color: var(--c-primary-dark); }
+.btn-accent { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
+.btn-accent:hover { background: #0d9488; border-color: #0d9488; color: #fff; }
+.btn-outline-primary { --bs-btn-color: var(--c-primary); --bs-btn-border-color: var(--c-primary);
+  --bs-btn-hover-bg: var(--c-primary); --bs-btn-hover-border-color: var(--c-primary); }
+
+/* Tableau */
+.table thead th { background: var(--c-primary-dark); color: #fff; border: 0; }
+.table thead th a { color: #fff !important; }
+.table-striped > tbody > tr:nth-of-type(odd) > * { --bs-table-bg-type: #eef2ff; }
+.table-hover > tbody > tr:hover > * { --bs-table-bg-state: #ccfbf1; }
+
+/* Pastilles cycle / mention */
+.pastille { display: inline-block; padding: .2rem .6rem; border-radius: 999px; font-size: .8rem; font-weight: 600; }
+.cycle-licence  { background: #dbeafe; color: #1d4ed8; }
+.cycle-master   { background: #dcfce7; color: #15803d; }
+.cycle-doctorat { background: #fef3c7; color: #b45309; }
+.mention        { background: #ede9fe; color: #6d28d9; }
+
+/* Pagination, formulaire, cartes */
+.page-link { color: var(--c-primary); }
+.page-item.active .page-link { background: var(--c-primary); border-color: var(--c-primary); }
+.form-control:focus, .form-select:focus { border-color: var(--c-accent); box-shadow: 0 0 0 .2rem rgba(20,184,166,.25); }
+.carte { background: #fff; border-top: 4px solid var(--c-accent); border-radius: .75rem; }
+.badge.text-bg-secondary { background: var(--c-accent) !important; }
