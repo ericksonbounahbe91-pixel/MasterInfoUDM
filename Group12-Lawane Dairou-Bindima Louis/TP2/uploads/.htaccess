@@ -1,0 +1,7 @@
+# Les photos sont des images : on interdit toute exécution de script dans ce dossier
+php_flag engine off
+Options -ExecCGI
+RemoveHandler .php .phtml
+<FilesMatch "\.(php|phtml|phar)$">
+  Require all denied
+</FilesMatch>
