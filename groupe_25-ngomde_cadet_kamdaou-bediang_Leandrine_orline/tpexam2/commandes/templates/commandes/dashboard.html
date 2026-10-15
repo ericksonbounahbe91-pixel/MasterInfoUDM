@@ -1,0 +1,50 @@
+{% extends "commandes/base.html" %}
+{% block content %}
+<h2 class="mb-4">Tableau de bord</h2>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="card text-bg-primary"><div class="card-body">
+    <div class="small">Chiffre d'affaires</div><div class="fs-3 fw-bold">{{ ca_total|floatformat:2 }}</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card text-bg-success"><div class="card-body">
+    <div class="small">Commandes</div><div class="fs-3 fw-bold">{{ nb_commandes }}</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card text-bg-info"><div class="card-body">
+    <div class="small">Panier moyen</div><div class="fs-3 fw-bold">{{ panier_moyen|floatformat:2 }}</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card text-bg-secondary"><div class="card-body">
+    <div class="small">Clients / Produits</div><div class="fs-3 fw-bold">{{ nb_clients }} / {{ nb_produits }}</div></div></div></div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-lg-7"><div class="card"><div class="card-body">
+    <h6>Chiffre d'affaires par mois</h6><canvas id="cMois" height="120"></canvas></div></div></div>
+  <div class="col-lg-5"><div class="card"><div class="card-body">
+    <h6>Chiffre d'affaires par région</h6><canvas id="cRegions" height="200"></canvas></div></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-5"><div class="card"><div class="card-body">
+    <h6>Top 5 produits (quantités vendues)</h6><canvas id="cProduits" height="200"></canvas></div></div></div>
+  <div class="col-lg-4"><div class="card"><div class="card-body">
+    <h6>Top 5 clients (CA)</h6>
+    <ol class="mb-0">{% for c in top_clients %}<li>{{ c.nom }} {{ c.prenom }} — <strong>{{ c.ca|floatformat:2 }}</strong></li>{% empty %}<li class="text-muted">Aucune donnée</li>{% endfor %}</ol>
+  </div></div></div>
+  <div class="col-lg-3"><div class="card border-danger"><div class="card-body">
+    <h6 class="text-danger">Stock faible (&lt; 10)</h6>
+    <ul class="mb-0">{% for p in stock_bas %}<li>{{ p.designprod }} : <strong>{{ p.qtestock }}</strong></li>{% empty %}<li class="text-muted">Aucune alerte</li>{% endfor %}</ul>
+  </div></div></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script id="charts-data" type="application/json">{{ charts|safe }}</script>
+<script>
+  const d = JSON.parse(document.getElementById("charts-data").textContent);
+  new Chart(cMois, {type: "line", data: {labels: d.mois.labels,
+    datasets: [{label: "CA", data: d.mois.data, tension: .3, fill: true}]}});
+  new Chart(cRegions, {type: "doughnut", data: {labels: d.regions.labels,
+    datasets: [{data: d.regions.data}]}});
+  new Chart(cProduits, {type: "bar", data: {labels: d.produits.labels,
+    datasets: [{label: "Quantité vendue", data: d.produits.data}]},
+    options: {indexAxis: "y"}});
+</script>
+{% endblock %}
