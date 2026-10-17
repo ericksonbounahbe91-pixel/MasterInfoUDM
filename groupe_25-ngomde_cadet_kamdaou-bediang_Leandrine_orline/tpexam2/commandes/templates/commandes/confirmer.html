@@ -1,0 +1,12 @@
+{% extends "commandes/base.html" %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6">
+<div class="card border-danger shadow-sm"><div class="card-body">
+  <h3 class="card-title text-danger">Confirmer la suppression</h3>
+  <p>Retirer <strong>{{ ligne.idprod }}</strong> (quantité : {{ ligne.qtecmd }}) de la commande n°{{ ligne.idcmd_id }} ?</p>
+  <form method="post">{% csrf_token %}
+    <button class="btn btn-danger">Oui, supprimer</button>
+    <a class="btn btn-secondary" href="{{ retour }}">Annuler</a>
+  </form>
+</div></div></div></div>
+{% endblock %}

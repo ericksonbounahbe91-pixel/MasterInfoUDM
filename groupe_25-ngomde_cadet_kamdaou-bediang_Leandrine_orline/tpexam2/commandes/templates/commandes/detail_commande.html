@@ -1,0 +1,31 @@
+{% extends "commandes/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="mb-0">Commande n°{{ cmd.idcmd }}</h2>
+    <div class="text-muted">{{ cmd.datecmd|date:"d/m/Y" }} — {{ cmd.idcli }}</div>
+  </div>
+  <div>
+    <a class="btn btn-secondary" href="{% url 'commandes' %}">Retour</a>
+    <a class="btn btn-success" href="{% url 'ajouter_ligne' cmd.idcmd %}">+ Ajouter un produit</a>
+  </div>
+</div>
+<table class="table table-striped bg-white align-middle">
+  <thead class="table-dark"><tr>
+    <th>Produit</th><th class="text-end">Prix unitaire</th><th class="text-end">Quantité</th><th class="text-end">Sous-total</th><th></th>
+  </tr></thead>
+  <tbody>
+  {% for l in lignes %}
+    <tr>
+      <td>{{ l.idprod.designprod }}</td>
+      <td class="text-end">{{ l.idprod.prixuprod }}</td>
+      <td class="text-end">{{ l.qtecmd }}</td>
+      <td class="text-end">{{ l.sous_total|floatformat:2 }}</td>
+      <td class="text-end"><a class="btn btn-sm btn-outline-danger" href="{% url 'supprimer_ligne' cmd.idcmd l.idprod_id %}">Supprimer</a></td>
+    </tr>
+  {% empty %}<tr><td colspan="5" class="text-center text-muted">Cette commande ne contient aucun produit.</td></tr>
+  {% endfor %}
+  </tbody>
+  <tfoot><tr class="table-light"><th colspan="3" class="text-end">Total</th><th class="text-end">{{ total|floatformat:2 }}</th><th></th></tr></tfoot>
+</table>
+{% endblock %}
