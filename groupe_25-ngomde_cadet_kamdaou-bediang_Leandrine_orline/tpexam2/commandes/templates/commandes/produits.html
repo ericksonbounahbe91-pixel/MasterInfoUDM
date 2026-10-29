@@ -1,0 +1,22 @@
+{% extends "commandes/base.html" %}
+{% block content %}
+<h2 class="mb-3">Liste des produits</h2>
+<table class="table table-striped table-hover bg-white align-middle">
+  <thead class="table-dark"><tr>
+    <th>#</th><th>Photo</th><th>Désignation</th><th class="text-end">Stock</th><th class="text-end">Prix unitaire</th><th></th>
+  </tr></thead>
+  <tbody>
+  {% for p in produits %}
+    <tr>
+      <td>{{ p.idprod }}</td>
+      <td>{% if p.photoprod %}<img src="{{ p.photoprod.url }}" height="40" class="rounded">{% else %}<span class="text-muted">—</span>{% endif %}</td>
+      <td>{{ p.designprod }}</td>
+      <td class="text-end">{% if p.qtestock < 10 %}<span class="badge text-bg-danger">{{ p.qtestock }}</span>{% else %}{{ p.qtestock }}{% endif %}</td>
+      <td class="text-end">{{ p.prixuprod }}</td>
+      <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{% url 'modifier_produit' p.idprod %}">Modifier</a></td>
+    </tr>
+  {% empty %}<tr><td colspan="6" class="text-center text-muted">Aucun produit.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

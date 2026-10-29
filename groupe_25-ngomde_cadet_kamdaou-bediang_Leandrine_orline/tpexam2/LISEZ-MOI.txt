@@ -1,0 +1,9 @@
+Décompressez cette archive A LA RACINE de votre projet (là où se trouve manage.py).
+Acceptez de remplacer : commandes/admin.py, commandes/views.py, commandes/urls.py, config/urls.py.
+
+Vérifiez dans config/settings.py :
+  - 'commandes' dans INSTALLED_APPS
+  - MEDIA_URL = "/media/" et MEDIA_ROOT = BASE_DIR / "media"
+  - (optionnel) LANGUAGE_CODE = "fr-fr"
+
+Puis :  python manage.py runserver   ->  http://127.0.0.1:8000/

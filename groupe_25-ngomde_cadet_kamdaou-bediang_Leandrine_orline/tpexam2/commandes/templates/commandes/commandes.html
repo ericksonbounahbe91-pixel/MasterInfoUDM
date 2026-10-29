@@ -1,0 +1,23 @@
+{% extends "commandes/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Liste des commandes</h2>
+  <a class="btn btn-success" href="{% url 'nouvelle_commande' %}">+ Nouvelle commande</a>
+</div>
+<table class="table table-striped table-hover bg-white align-middle">
+  <thead class="table-dark"><tr>
+    <th>N°</th><th>Date</th><th>Client</th><th class="text-end">Produits</th><th class="text-end">Total</th><th></th>
+  </tr></thead>
+  <tbody>
+  {% for c in commandes %}
+    <tr>
+      <td>{{ c.idcmd }}</td><td>{{ c.datecmd|date:"d/m/Y" }}</td><td>{{ c.idcli }}</td>
+      <td class="text-end">{{ c.nb_lignes }}</td>
+      <td class="text-end">{{ c.total|default:0|floatformat:2 }}</td>
+      <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{% url 'detail_commande' c.idcmd %}">Détail</a></td>
+    </tr>
+  {% empty %}<tr><td colspan="6" class="text-center text-muted">Aucune commande.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
